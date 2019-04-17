@@ -1,7 +1,10 @@
 <?php
 
+session_start();
+
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 	include("configure.php");
+	
 
 	$username = $_POST['username'];
 	$email = $_POST['email'];
@@ -18,38 +21,33 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 		$count = mysqli_num_rows($result);
 	      
 		// If result matched $myusername and $mypassword, table row must be 1 row
-
-		session_start();
-
 		if($count == 1) {
-			$_SESSION['login_user'] = $email;
+			$_SESSION['login_user'] = $row['UserID'];
 			header("location:profile.php");
 		}else {
 			echo "Your Login Name or Password is invalid";
 		}
 	}else{
 
-		$userCheck = "SELECT UserID FROM User WHERE UserID = '$username'";
+		$userCheck = "SELECT UserID FROM User WHERE username = '$username'";
 		$userCheckresult = mysqli_query($db,$userCheck);
-		
-		if ($numberResults > 0){
-			echo 'User Name Already Exist ' . $numberResults;
-		}
 
 		$emailCheck = "SELECT Email FROM User WHERE Email = '$email'";
 		$emailCheckresult = mysqli_query($db,$emailCheck);
 		
-		if (mysqli_num_rows($emailCheckresult) > 0){
+		if ($numberResults > 0){
+			echo 'User Name Already Exist ' . $numberResults;
+		}		
+		elseif (mysqli_num_rows($emailCheckresult) > 0){
 			echo 'Emai Already In Use';
 		}
+		else{
+			$query = "INSERT INTO `User`(`username`, `Email`, `Password`) VALUES ('$username', '$email', '$password')";
+			mysqli_query($db, $query);
 
-		$query = "INSERT INTO User VALUES ('122', $username', '$email', '$password')";
-		mysqli_query($query);
-
-		mysqli_close();
-
-		header("location:get.php");
+			$_SESSION['login_user'] = $username;
+			header("location:profile.php");
+		}
 	}
-	
 }
 ?>

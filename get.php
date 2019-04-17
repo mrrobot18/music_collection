@@ -20,6 +20,7 @@ echo "<b><center>Database Output</center></b><br><br>";
 <table border="0" cellspacing="2" cellpadding="2">
 <tr> 
 <th><font face="Arial, Helvetica, sans-serif">ID</font></th>
+<th><font face="Arial, Helvetica, sans-serif">UserName</font></th>
 <th><font face="Arial, Helvetica, sans-serif">E-mail</font></th>
 <th><font face="Arial, Helvetica, sans-serif">Pass</font></th>
 </tr>
@@ -29,12 +30,14 @@ echo "<b><center>Database Output</center></b><br><br>";
 <?
 $i=0;
 while ($i < $num1) {
-$id=mysql_result($result1,$i,"UserID");
+$id1=mysql_result($result1,$i,"UserID");
+$id=mysql_result($result1,$i,"username");
 $email=mysql_result($result1,$i,"Email");
 $pass=mysql_result($result1,$i,"Password");
 ?>
 
 <tr> 
+<td><font face="Arial, Helvetica, sans-serif"><? echo "$id1"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$id"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$email"; ?></font></td>
 <td><font face="Arial, Helvetica, sans-serif"><? echo "$pass"; ?></font></td>

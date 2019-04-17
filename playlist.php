@@ -2,6 +2,8 @@
 	session_start();
 	include('session.php');
 
+	$PLID = htmlspecialchars($_GET["PLID"]);
+
 	//Print all global variables - >   print_r($_SESSION);
 ?>
 <html lang="en">
@@ -30,9 +32,7 @@
 				<div class="collapse navbar-collapse" id="navbarResponsive">
 					<ul class="navbar-nav ml-auto">
 						<li class="nav-item active">
-							<a class="nav-link" href="profile.php">Playlists
-								<span class="sr-only">(current)</span>
-							</a>
+							<a class="nav-link" href="profile.php">Playlists</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="logout.php">Sign Out</a>
@@ -46,40 +46,60 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12 text-center">
-					<h1 class="mt-5">Welcome <?php echo $login_username; ?></h1>
+					<h1 class="mt-5">Playlist <?php echo $PLID; ?></h1>
 
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th scope="col">Playlist ID</th>
-								<th scope="col">Name</th>
-								<th scope="col"># of songs</th>
-								<th scope="col">Edit Songs</th>
-								<th scope="col">View</th>
-								<th scope="col">Remove</th>
+								<th scope="col">Title</th>
+								<th scope="col">Artist</th>
+								<th scope="col">Album</th>
+								<th scope="col">Genre</th>
+								<th scope="col">Year</th>
+								<th scope="col">Playtime</th>
+								<th scope="col">URL</th>
+								<th scope="col"></th>
 							</tr>
 						</thead>
 						<tbody>
 						<?php 
-							$getPlaylist = "SELECT PlaylistID FROM Playlist WHERE UserID = '$login_id'";
-							$playlistsIDs = mysqli_query($db,$getPlaylist);
+							$getSongs = "SELECT SongID FROM Songlists WHERE PlaylistID = '$PLID'";
+							$songIDs = mysqli_query($db,$getSongs);
 
-							while ($row = $playlistsIDs->fetch_assoc()) {
-								$PLID = $row["PlaylistID"];
+							while ($row = $songIDs->fetch_assoc()) {
+								$SID = $row["SongID"];
 
-								$getNumberOfSongs = "SELECT COUNT(*) AS count FROM Songlists WHERE PlaylistID = '$PLID'";
-								$songNum = mysqli_query($db,$getNumberOfSongs);
+								$getSongData = "SELECT * FROM Songs WHERE SongID = '$SID'";
+								$songData = mysqli_query($db,$getSongData);
 
-								$SonglistRow = $songNum->fetch_assoc();
-								$PLSongs = $SonglistRow['count'];
+								$SongRow = $songData->fetch_assoc();
 
+								$STitle = $SongRow['Title'];
+								$SArtistID = $SongRow['ArtID'];
+								$SAlbumID = $SongRow['AlbumID'];
+								$SGenre = $SongRow['Genre'];
+								$SYear = $SongRow['Year'];
+								$SPlaytime = $SongRow['Playtime'];
+								$SURL = $SongRow['URL'];
+
+								$getArtistName = "SELECT Name FROM Artists WHERE ArtID = '$SArtistID'";
+								$ArtistName = mysqli_query($db,$getArtistName);
+								$ArtistRow = $ArtistName->fetch_assoc();
+
+								$ArtName = $ArtistRow['Name'];
 						?>
 								<tr>
-									<th scope="row" class="text-center"><?php echo $PLID; ?></th>
-									<td class="text-center">Name of the playlist, we need to add this field to table</td>
-									<td class="text-center"><?php echo $PLSongs ?></td>
-									<td class="text-center"><a href="playlist.php?PLID=<?php echo $PLID; ?>"><i class="fas fa-edit"></i></a></td>
-									<td class="text-center"><i class="fas fa-eye"></i></td>
+									<td class="text-center"><?php echo $STitle ?></td>
+									<td class="text-center"><?php echo $ArtName ?></td>
+									<td class="text-center"><?php echo $SAlbumID ?></td>
+									<td class="text-center"><?php echo $SGenre ?></td>
+									<td class="text-center"><?php echo $SYear ?></td>
+									<td class="text-center"><?php echo $SPlaytime ?></td>
+									<td class="text-center">
+										<a href="<?php echo $SURL ?>" target="_blank">
+											<i class="fas fa-play"></i>
+										</a>
+									</td>
 									<td class="text-center"><i class="fas fa-trash-alt"></i></td>
 								</tr>
 						<?php
@@ -96,3 +116,4 @@
 		<script src="js/bootstrap.bundle.js"></script>
 	</body>
 </html>
+
